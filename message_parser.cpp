@@ -19,7 +19,7 @@ extern AvrPin led_red, led_blue;
 Message::Message(CircBuffer& buffer): cbuffer(buffer), header((Header&)*raw_header), peek(cbuffer.peek()){
 	header.msg_len = 0;
 	ready = false;
-	int16_t timeout_ms = 100;
+	int16_t timeout_ms = 300;
 	uint8_t timeout_step = 5;
 	if(get_header()){
 		for(int32_t i=0; i<header.msg_len; i++)	//it should take about 36us to receive one char
@@ -28,17 +28,21 @@ Message::Message(CircBuffer& buffer): cbuffer(buffer), header((Header&)*raw_head
 			_delay_ms(timeout_step);
 		}
 		if(timeout_ms > 0){
-			check_crc();
+			if(check_crc()){
+				ready = true;
+			}
+//			else{
+//				printf("hd-crcfail\n");
+//			}
 		}
 		else{
 			//printf("timeout\n");
-			led_red = hi;
+			//printf("A:%u ", cbuffer.available);
+			//printf("L:%u \n", header.msg_len);
 			cbuffer.flush();
 			header.crc = msg_id::dtx;
-			led_red = lo;
 			//crc = crc_result::dtx;
 		}
-		ready = true;
 	}
 }
 
