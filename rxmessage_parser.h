@@ -5,8 +5,8 @@
  *      Author: rafal
  */
 
-#ifndef AVR_MESSAGE_PARSER_MESSAGE_PARSER_H_
-#define AVR_MESSAGE_PARSER_MESSAGE_PARSER_H_
+#ifndef AVR_MESSAGE_PARSER_RXMESSAGE_PARSER_H_
+#define AVR_MESSAGE_PARSER_RXMESSAGE_PARSER_H_
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -18,6 +18,7 @@
 struct Header{
 	char 		head_start;	//'>'
 	uint16_t	id;
+	uint16_t	context;
 	uint32_t 	msg_len;
 	uint16_t	crc;
 	char		head_end;	//'<'
@@ -31,25 +32,35 @@ namespace crc_result{
 	};
 }
 
-namespace msg_id{
+namespace rx_id{
 	enum id{
 		txt_command,
 		write_at,
 		rxflush,
 		setbankname,
-		get_bank_info,
 		get_sram_packet,
 		get_bank_packet,
 		enable_sram,
 		update_sram,
 		update_sram_bytes,
+		handshake,
+		get_write_stats,
+		bootloader,
+		disable_bootloader,
+		dummy,
+		reset_emu,
+		bank1_set,
+		bank2_set,
+		bank3_set,
+		get_bank_in_use,
+		set_bank_name,
 		test,
 		dtx = 0xfffe,
 		crc_failed = 0xffff,
 	};
 }
 
-class Message{
+class RxMessage{
 private:
 	bool				get_header();
 	//int32_t 			msg_start_mark;
@@ -64,7 +75,7 @@ public:
 	void				disp_header();
 	bool 				ready;
 	uint16_t			get_msg();
-	Message(CircBuffer& buffer);
+	RxMessage(CircBuffer& buffer);
 	operator bool(){
 		return ready;
 	}
@@ -72,4 +83,4 @@ public:
 
 
 
-#endif /* AVR_MESSAGE_PARSER_MESSAGE_PARSER_H_ */
+#endif /* AVR_MESSAGE_PARSER_RXMESSAGE_PARSER_H_ */
