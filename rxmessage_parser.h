@@ -15,6 +15,7 @@
 #define HEAD_START_MARK	'>'
 #define HEAD_END_MARK	'<'
 
+
 struct Header{
 	char 		head_start;	//'>'
 	uint16_t	id;
@@ -37,7 +38,7 @@ namespace rx_id{
 		txt_command,
 		write_at,
 		rxflush,
-		setbankname,
+		setbankname,		//to be removed, defined twice, use it for different purposes ?
 		get_sram_packet,
 		get_bank_packet,
 		enable_sram,
@@ -45,7 +46,7 @@ namespace rx_id{
 		update_sram_bytes,
 		handshake,
 		get_write_stats,
-		bootloader,
+		bootloader_safe,
 		disable_bootloader,
 		dummy,
 		reset_emu,
@@ -54,9 +55,20 @@ namespace rx_id{
 		bank3_set,
 		get_bank_in_use,
 		set_bank_name,
-		test,
-		dtx = 0xfffe,
-		crc_failed = 0xffff,
+		digifant_code_check,
+		set_pin,
+		apply_digidiag,
+		disable_digidiag,
+		wipe_banks,
+		bootloader_old,
+		get_banks_info,
+		reset_banks_info,
+		update_bank_data,
+		//--special commands--
+			test,
+			dtx = 0xfffe,
+			crc_failed = 0xffff,
+
 	};
 }
 
@@ -79,8 +91,11 @@ public:
 	operator bool(){
 		return ready;
 	}
+	operator uint16_t(){
+		return header.context;
+	}
 };
 
-
+bool check_crc(RxMessage& message);
 
 #endif /* AVR_MESSAGE_PARSER_RXMESSAGE_PARSER_H_ */

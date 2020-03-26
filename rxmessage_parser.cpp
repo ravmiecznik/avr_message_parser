@@ -14,7 +14,7 @@
 #include "../avr_ports/avr_ports.h"
 #include "../atm128_timers/timers_r.h"
 
-extern AvrPin led_red, led_blue;
+
 extern Timer1 t1;
 
 //Message
@@ -22,7 +22,7 @@ extern Timer1 t1;
 RxMessage::RxMessage(CircBuffer& buffer): cbuffer(buffer), header((Header&)*raw_header), peek(cbuffer.peek()){
 	header.msg_len = 0;
 	ready = false;
-	uint32_t timeout_ms = 400;
+	uint32_t timeout_ms = 200;
 	uint32_t time_elapsed = 0;
 	uint32_t t0 = t1.tstamp_ms();
 	//uint8_t timeout_step = 1;
@@ -30,7 +30,7 @@ RxMessage::RxMessage(CircBuffer& buffer): cbuffer(buffer), header((Header&)*raw_
 		for(uint32_t i=0; i<header.msg_len; i++)	//it should take about 36us to receive one char
 			_delay_us(35);						//can't use formula in _delay_us()
 		while(cbuffer.available < header.msg_len and (t1.tstamp_ms() - t0) < timeout_ms){
-			_delay_ms(10);
+			_delay_us(50);
 			time_elapsed = t1.tstamp_ms() - t0;
 		}
 		if(time_elapsed < timeout_ms){
@@ -79,12 +79,12 @@ bool RxMessage::check_crc(){
 
 void RxMessage::disp_header(){
 	//Header h = (Header&)*raw_header;
-	printf("%c\n", 				header.head_start);
-	printf("id           %d\n", header.id);
-	printf("context		%u\n",	header.context);
-	printf("len         %lu\n", header.msg_len);
-	printf("crc(hex)  %X\n", 	header.crc);
-	printf("%c\n", 				header.head_end);
+//	printf("%c\n", 				header.head_start);
+//	printf("id           %d\n", header.id);
+//	printf("context		%u\n",	header.context);
+//	printf("len         %lu\n", header.msg_len);
+//	printf("crc(hex)  %X\n", 	header.crc);
+//	printf("%c\n", 				header.head_end);
 }
 
 
