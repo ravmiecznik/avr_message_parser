@@ -66,6 +66,7 @@ namespace rx_id{
 		update_bank_data,
 		//--special commands--
 			test,
+			nack = 0xfffd,
 			dtx = 0xfffe,
 			crc_failed = 0xffff,
 
