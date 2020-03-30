@@ -11,6 +11,7 @@
 #include <avr/delay.h>
 #include <ctype.h>
 #include <avr/crc16.h>
+#include <avr/wdt.h>
 #include "../avr_ports/avr_ports.h"
 #include "../atm128_timers/timers_r.h"
 
@@ -18,28 +19,28 @@
 
 
 extern Timer1 t1;
-//extern AvrPin led_red;
+extern AvrPin led_red;
 
 //Message
 
 RxMessage::RxMessage(CircBuffer& buffer): cbuffer(buffer), header((Header&)*raw_header), peek(cbuffer.peek()){
 	header.msg_len = 0;
 	ready = false;
-	volatile uint32_t timeout_ms = 200;
+	volatile uint32_t timeout_ms = 300;
 	volatile uint32_t time_elapsed = 0;
 	uint32_t t0 = t1.tstamp_ms();
-	//uint8_t timeout_step = 1;
 	if(get_header()){
 		for(uint32_t i=0; i<header.msg_len; i++)	//it should take about 36us to receive one char
 			_delay_us(35);						//can't use formula in _delay_us()
+		wdt_enable(WDTO_1S);
 		while(cbuffer.available < header.msg_len){
 			if(t1.tstamp_ms() - t0 > timeout_ms){
 				cbuffer.flush();
 				header.crc = rx_id::dtx;
 				break;
 			}
-			//led_red.toggle();
 		}
+		wdt_disable();
 		if(check_crc()){
 			ready = true;
 		}
