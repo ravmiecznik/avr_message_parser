@@ -64,6 +64,7 @@ namespace rx_id{
 		get_banks_info,
 		reset_banks_info,
 		update_bank_data,
+		freemem,
 		//--special commands--
 			test,
 			nack = 0xfffd,
