@@ -77,10 +77,8 @@ namespace rx_id{
 class RxMessage{
 private:
 	bool				get_header();
-	//int32_t 			msg_start_mark;
 	bool				check_crc();
 public:
-	//crc_result::result	crc;
 	uint8_t 			raw_header[sizeof(Header)];
 	Header&				header;
 	CircBuffer&			cbuffer;
